@@ -1,0 +1,9 @@
+.idea/
+.DS_Store
+
+*.exe
+main
+gin-admin.exe
+.env
+runtime/*
+vendor
