@@ -17,6 +17,7 @@ func Context(c *gin.Context) *Wrapper {
 
 type Response struct {
 	Code    int         `json:"code"`
+	Status  int         `json:"status"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
@@ -34,10 +35,11 @@ func (wrapper *Wrapper) View(name string, data ...interface{}) {
 func (wrapper *Wrapper) Success(data ...interface{}) {
 	responseData := interface{}(nil)
 	if len(data) > 0 {
-		responseData = data
+		responseData = data[0]
 	}
 	wrapper.JSON(http.StatusOK, Response{
-		Code:    http.StatusOK,
+		Code:    0,
+		Status:  http.StatusOK,
 		Message: "Success",
 		Data:    responseData,
 	})
@@ -51,7 +53,8 @@ func (wrapper *Wrapper) Error(errCode int, message ...string) {
 		responseMessage = message[0]
 	}
 	wrapper.JSON(http.StatusOK, Response{
-		Code:    errCode,
+		Code:    0,
+		Status:  errCode,
 		Message: responseMessage,
 	})
 	wrapper.Abort()

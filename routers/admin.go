@@ -11,7 +11,9 @@ func InitAdminRouter(router *gin.Engine) {
 
 	authGroup := router.Group("auth")
 	{
-		authGroup.Any("login", controller.Login)
+		authGroup.GET("login", controller.Login)
+		authGroup.POST("login", controller.Login)
+
 		authGroup.GET("captcha", controller.Captcha)
 		// 权限验证中间件 中间件上面的不做token验证
 		authGroup.Use(middleware.AdminAuth())
@@ -24,7 +26,6 @@ func InitAdminRouter(router *gin.Engine) {
 		groups.Use(middleware.AdminAuth())
 		groups.GET("index", controller.Index)
 		groups.GET("dashboard", controller.Dashboard)
-
 		groups.POST("create", controller.CreateAdmin)
 		groups.POST("update", controller.UpdateAdmin)
 		groups.POST("detail", controller.Detail)
