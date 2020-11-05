@@ -37,8 +37,8 @@ func (db *Manager) Connect() error {
 	connection.SetMaxOpenConns(db.conf.MaxOpen)
 	show := os.Getenv("APP_ENV")
 	if show == gin.DebugMode {
-		connection.ShowSQL(true)
-		connection.Logger().SetLevel(log.LOG_DEBUG)
+		connection.ShowSQL(false)
+		connection.Logger().SetLevel(log.LOG_INFO)
 	}
 	fmt.Println("Connect mysql success:", db.conf.Host)
 	db.Engine = connection

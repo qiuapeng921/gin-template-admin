@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"gin-admin/app/http/request"
 	"gin-admin/app/service"
 	"gin-admin/app/utility/app"
 	"gin-admin/app/utility/captcha"
@@ -10,11 +11,6 @@ import (
 	"net/http"
 )
 
-type authRequestData struct {
-	Username string `json:"username" form:"username" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
-	Code     string `json:"code" form:"code" binding:"required"`
-}
 
 // @生成验证码
 // @Author 邱阿朋
@@ -33,16 +29,16 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	var request authRequestData
-	if err := ctx.ShouldBind(&request); err != nil {
+	var params request.AuthRequest
+	if err := ctx.ShouldBind(&params); err != nil {
 		response.Context(ctx).Error(10000, err.Error())
 		return
 	}
-	if !captcha.VerifyCaptcha(ctx, request.Code) {
+	if !captcha.VerifyCaptcha(ctx, params.Code) {
 		response.Context(ctx).Error(10001, "验证码错误")
 		return
 	}
-	result, code, err := service.HandelAdminAuth(request.Username, request.Password)
+	result, code, err := service.HandelAdminAuth(params.Username, params.Password)
 	if err != nil {
 		response.Context(ctx).Error(code, err.Error())
 	} else {

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"gin-admin/app/http/request"
 	"gin-admin/app/models/admin_role"
 	"gin-admin/app/models/admins"
 	"gin-admin/app/utility/app"
@@ -11,15 +12,20 @@ import (
 	"strconv"
 )
 
-type adminRequest struct {
-	Username string `json:"username" form:"username" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
-	Status   int    `json:"status"`
-	Phone    string `json:"phone" form:"phone" binding:"required"`
-	RoleId   int    `json:"role_id" form:"role_id" binding:"required"`
+
+// @获取列表页面
+// @Author 邱阿朋
+// @Date 12:29 2020/11/05
+func GetPage(ctx *gin.Context) {
+	response.Context(ctx).View("admin/list")
+	return
 }
 
-func Detail(ctx *gin.Context) {
+func GetAdminList(ctx *gin.Context) {
+
+}
+
+func GetAdminDetail(ctx *gin.Context) {
 	id := ctx.GetInt("id")
 	result, resErr := admins.GetAdminById(id)
 	if resErr != nil {
@@ -31,9 +37,9 @@ func Detail(ctx *gin.Context) {
 }
 
 func CreateAdmin(ctx *gin.Context) {
-	var request adminRequest
+	var params request.AdminRequest
 	var err error
-	if err = ctx.ShouldBind(&request); err != nil {
+	if err = ctx.ShouldBind(&params); err != nil {
 		response.Context(ctx).Error(10000, "参数验证错误:"+err.Error())
 		return
 	}
@@ -41,14 +47,14 @@ func CreateAdmin(ctx *gin.Context) {
 
 	db := app.DB()
 	// 判断用户是否存在
-	if adminCount, _ := db.Where("username=?", request.Username).Count(&admin); adminCount > 0 {
-		response.Context(ctx).Error(10001, "用户"+request.Username+"已存在")
+	if adminCount, _ := db.Where("username=?", params.Username).Count(&admin); adminCount > 0 {
+		response.Context(ctx).Error(10001, "用户"+params.Username+"已存在")
 		return
 	}
 
-	admin.Username = request.Username
-	admin.Password = system.EncodeMD5(request.Username)
-	admin.Phone = request.Phone
+	admin.Username = params.Username
+	admin.Password = system.EncodeMD5(params.Username)
+	admin.Phone = params.Phone
 
 	// 开启一个事物管道
 	session := db.NewSession()
@@ -72,7 +78,7 @@ func CreateAdmin(ctx *gin.Context) {
 
 	var role admin_role.Entity
 	role.AdminId = admin.Id
-	role.RoleId = request.RoleId
+	role.RoleId = params.RoleId
 
 	// 添加管理员角色关系
 	_, err = session.Insert(&role)
@@ -95,7 +101,7 @@ func UpdateAdmin(ctx *gin.Context) {
 	id, _ := strconv.Atoi(queryId)
 
 	var (
-		request adminRequest
+		params request.AdminRequest
 		err     error
 		admin   admins.Entity
 	)
@@ -107,14 +113,14 @@ func UpdateAdmin(ctx *gin.Context) {
 		return
 	}
 
-	if err = ctx.ShouldBind(&request); err != nil {
+	if err = ctx.ShouldBind(&params); err != nil {
 		response.Context(ctx).Error(10002, "参数验证错误:"+err.Error())
 		return
 	}
 
 	db := app.DB()
-	if request.Username != admin.Username {
-		fmt.Println(request, admin)
+	if params.Username != admin.Username {
+		fmt.Println(params, admin)
 		_, err := db.Where("id=?", id).Count(&admin)
 		if err != nil {
 			response.Context(ctx).Error(10003, err.Error())
@@ -122,7 +128,7 @@ func UpdateAdmin(ctx *gin.Context) {
 		}
 		fmt.Println(id, admin)
 		if id != admin.Id {
-			response.Context(ctx).Error(10004, request.Username+":已存在,请更换用户")
+			response.Context(ctx).Error(10004, params.Username+":已存在,请更换用户")
 			return
 		}
 	}
@@ -138,10 +144,10 @@ func UpdateAdmin(ctx *gin.Context) {
 		return
 	}
 
-	admin.Username = request.Username
-	admin.Password = system.EncodeMD5(request.Password)
-	admin.Phone = request.Phone
-	admin.Status = request.Status
+	admin.Username = params.Username
+	admin.Password = system.EncodeMD5(params.Password)
+	admin.Phone = params.Phone
+	admin.Status = params.Status
 
 	_, err = session.ID(id).Update(&admin)
 	if err != nil {
@@ -151,13 +157,18 @@ func UpdateAdmin(ctx *gin.Context) {
 	}
 
 	var adminRole admin_role.Entity
-	adminRole.RoleId = request.RoleId
+	adminRole.RoleId = params.RoleId
 	if _, err = session.Where("admin_id=?", id).Update(&adminRole); err != nil {
 		_ = session.Rollback()
 		response.Context(ctx).Error(10006, "更新管理员角色关系失败:"+err.Error())
 		return
 	}
 	_ = session.Commit()
-	response.Context(ctx).Success(request)
+	response.Context(ctx).Success(params)
+	return
+}
+
+func DeleteAdmin(ctx *gin.Context)  {
+	response.Context(ctx).Success()
 	return
 }

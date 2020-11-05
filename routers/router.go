@@ -9,6 +9,7 @@ import (
 )
 
 func SetupRouter(router *gin.Engine) {
+	// 加载模板引擎
 	templates.InitTemplate(router)
 
 	router.Use(
@@ -21,8 +22,14 @@ func SetupRouter(router *gin.Engine) {
 		ctx.Redirect(http.StatusMovedPermanently, "/admin/index")
 	})
 
+	// 404错误
 	router.NoRoute(func(ctx *gin.Context) {
 		response.Context(ctx).View("error", gin.H{"message": "路由异常"})
+		return
+	})
+
+	router.NoMethod(func(ctx *gin.Context) {
+		response.Context(ctx).View("error", gin.H{"message": "请求方式错误"})
 		return
 	})
 

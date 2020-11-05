@@ -26,9 +26,12 @@ func InitAdminRouter(router *gin.Engine) {
 		groups.Use(middleware.AdminAuth())
 		groups.GET("index", controller.Index)
 		groups.GET("dashboard", controller.Dashboard)
+
+		groups.GET("page", controller.GetPage)
+		groups.POST("detail", controller.GetAdminDetail)
 		groups.POST("create", controller.CreateAdmin)
 		groups.POST("update", controller.UpdateAdmin)
-		groups.POST("detail", controller.Detail)
+		groups.POST("delete", controller.DeleteAdmin)
 
 		roleGroup := groups.Group("role")
 		{
