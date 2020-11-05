@@ -2,7 +2,7 @@
 
 ## 安装
 ```
-git clone https://gitea.phpswoole.cn/qiuapeng921/gin-admin $GOPATH/src/gin-admin
+git clone https://github.com/qiuapeng921/gin-template-admin
 ```
 
 ### 必须
