@@ -2,6 +2,7 @@ package system
 
 import (
 	"encoding/json"
+	"gin-admin/app/utility/app"
 	"github.com/goinggo/mapstructure"
 	"reflect"
 )
@@ -10,7 +11,7 @@ import (
 func JsonToStruct(jsonStr string, obj interface{}) error {
 	err := json.Unmarshal([]byte(jsonStr), &obj)
 	if err != nil {
-		SecurePanic(err)
+		app.Panic(err)
 	}
 	return nil
 }
@@ -19,7 +20,7 @@ func JsonToStruct(jsonStr string, obj interface{}) error {
 func StructToJson(Struct interface{}) string {
 	jsonBytes, err := json.Marshal(Struct)
 	if err != nil {
-		SecurePanic(err)
+		app.Panic(err)
 	}
 	return string(jsonBytes)
 }
@@ -28,7 +29,7 @@ func StructToJson(Struct interface{}) string {
 func JsonToMap(jsonStr string) (result map[string]interface{}) {
 	err := json.Unmarshal([]byte(jsonStr), &result)
 	if err != nil {
-		SecurePanic(err)
+		app.Panic(err)
 	}
 	return result
 }
@@ -37,7 +38,7 @@ func JsonToMap(jsonStr string) (result map[string]interface{}) {
 func MapToJson(instance map[string]interface{}) string {
 	jsonStr, err := json.Marshal(instance)
 	if err != nil {
-		SecurePanic(err)
+		app.Panic(err)
 	}
 	return string(jsonStr)
 }
@@ -46,7 +47,7 @@ func MapToJson(instance map[string]interface{}) string {
 func MapToStruct(instance map[string]interface{}, people struct{}) struct{} {
 	err := mapstructure.Decode(instance, &people)
 	if err != nil {
-		SecurePanic(err)
+		app.Panic(err)
 	}
 	return people
 }

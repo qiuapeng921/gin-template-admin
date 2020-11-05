@@ -19,13 +19,11 @@ import (
 )
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		system.SecurePanic(err)
-	}
+	app.Panic(godotenv.Load())
+
 	// 初始化所有工具类
-	system.SecurePanic(app.Redis().Connect())
-	system.SecurePanic(app.ConnectDB())
+	app.Panic(app.Redis().Connect())
+	app.Panic(app.ConnectDB())
 
 	// 自动创建数据表
 	database.AutoGenTable()

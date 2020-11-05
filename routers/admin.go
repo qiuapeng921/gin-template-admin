@@ -28,6 +28,7 @@ func InitAdminRouter(router *gin.Engine) {
 		groups.GET("dashboard", controller.Dashboard)
 
 		groups.GET("page", controller.GetPage)
+		groups.Any("list", controller.GetAdminList)
 		groups.POST("detail", controller.GetAdminDetail)
 		groups.POST("create", controller.CreateAdmin)
 		groups.POST("update", controller.UpdateAdmin)

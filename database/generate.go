@@ -39,7 +39,7 @@ func defaultData() {
 	admin.Password = system.EncodeMD5("123456")
 	admin.Phone = "15249279779"
 	if _, err := orm.InsertOne(&admin); err != nil {
-		fmt.Println("初始化超管失败," + err.Error())
+		app.Error("初始化超管失败", err)
 	}
 	fmt.Println("初始化超管成功")
 
@@ -47,7 +47,7 @@ func defaultData() {
 	role.RoleName = "超管"
 	role.RoleDesc = "超级管理员"
 	if _, err := orm.Insert(&role); err != nil {
-		fmt.Println("初始化角色失败," + err.Error())
+		app.Error("初始化角色失败", err)
 	}
 	fmt.Println("初始化角色成功")
 
@@ -55,7 +55,7 @@ func defaultData() {
 	adminRole.AdminId = 1
 	adminRole.RoleId = 1
 	if _, err := orm.Insert(&adminRole); err != nil {
-		fmt.Println("初始化用户角色关系失败," + err.Error())
+		app.Error("初始化用户角色关系失败", err)
 	}
 	fmt.Println("初始化用户角色关系成功")
 }

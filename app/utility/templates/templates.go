@@ -1,7 +1,7 @@
 package templates
 
 import (
-	"gin-admin/app/utility/system"
+	"gin-admin/app/utility/app"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 	"path/filepath"
@@ -25,13 +25,13 @@ func loadTemplates(templatesDir string) multitemplate.Renderer {
 
 	// 加载后台模板
 	layouts, err = filepath.Glob(templatesDir + "/layouts/backend_base.html")
-	system.SecurePanic(err)
+	app.Panic(err)
 
 	pages, err = filepath.Glob(templatesDir + "/backend/*.html")
-	system.SecurePanic(err)
+	app.Panic(err)
 
 	subPages, err = filepath.Glob(templatesDir + "/backend/**/*.html")
-	system.SecurePanic(err)
+	app.Panic(err)
 
 	if len(subPages) > 0 {
 		for _, page := range subPages {

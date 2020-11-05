@@ -1,10 +1,12 @@
 package app
 
 import (
+	"fmt"
 	"gin-admin/app/utility/mysql"
 	"gin-admin/app/utility/redis"
 	"gin-admin/config"
 	"go.uber.org/dig"
+	"log"
 	"net/http"
 	"xorm.io/xorm"
 )
@@ -21,6 +23,19 @@ func init() {
 	_ = container.Provide(newDBManager)
 	// 注入http客户端
 	_ = container.Provide(newHttpClient)
+}
+
+func Panic(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func Error(msg string, err error) {
+	if err != nil {
+		panic(fmt.Errorf("%s:%v", msg, err))
+	}
+	log.Println("Success:", msg)
 }
 
 func Redis() (client *redis.Client) {

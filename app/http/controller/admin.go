@@ -12,7 +12,6 @@ import (
 	"strconv"
 )
 
-
 // @获取列表页面
 // @Author 邱阿朋
 // @Date 12:29 2020/11/05
@@ -22,7 +21,11 @@ func GetPage(ctx *gin.Context) {
 }
 
 func GetAdminList(ctx *gin.Context) {
-
+	var admin admins.Entity
+	_, _ = app.DB().Get(&admin)
+	count, _ := app.DB().Count(&admin)
+	response.Context(ctx).Page(int(count),admin)
+	return
 }
 
 func GetAdminDetail(ctx *gin.Context) {
@@ -102,8 +105,8 @@ func UpdateAdmin(ctx *gin.Context) {
 
 	var (
 		params request.AdminRequest
-		err     error
-		admin   admins.Entity
+		err    error
+		admin  admins.Entity
 	)
 
 	// 判断用户是否存在
@@ -168,7 +171,7 @@ func UpdateAdmin(ctx *gin.Context) {
 	return
 }
 
-func DeleteAdmin(ctx *gin.Context)  {
+func DeleteAdmin(ctx *gin.Context) {
 	response.Context(ctx).Success()
 	return
 }

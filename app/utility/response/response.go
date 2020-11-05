@@ -7,22 +7,23 @@ import (
 	"net/http"
 )
 
-type Wrapper struct {
+type wrapper struct {
 	*gin.Context
 }
 
-func Context(c *gin.Context) *Wrapper {
-	return &Wrapper{c}
+func Context(c *gin.Context) *wrapper {
+	return &wrapper{c}
 }
 
-type Response struct {
+type response struct {
 	Code    int         `json:"code"`
+	Count   int         `json:"count"`
 	Status  int         `json:"status"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
 
-func (wrapper *Wrapper) View(name string, data ...interface{}) {
+func (wrapper *wrapper) View(name string, data ...interface{}) {
 	responseData := interface{}(nil)
 	if len(data) > 0 {
 		responseData = data[0]
@@ -32,12 +33,12 @@ func (wrapper *Wrapper) View(name string, data ...interface{}) {
 	return
 }
 
-func (wrapper *Wrapper) Success(data ...interface{}) {
+func (wrapper *wrapper) Success(data ...interface{}) {
 	responseData := interface{}(nil)
 	if len(data) > 0 {
 		responseData = data[0]
 	}
-	wrapper.JSON(http.StatusOK, Response{
+	wrapper.JSON(http.StatusOK, response{
 		Code:    0,
 		Status:  http.StatusOK,
 		Message: "Success",
@@ -47,12 +48,24 @@ func (wrapper *Wrapper) Success(data ...interface{}) {
 	return
 }
 
-func (wrapper *Wrapper) Error(errCode int, message ...string) {
+func (wrapper *wrapper) Page(count int, data ...interface{}) {
+	wrapper.JSON(http.StatusOK, response{
+		Code:    0,
+		Count:   count,
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    data,
+	})
+	wrapper.Abort()
+	return
+}
+
+func (wrapper *wrapper) Error(errCode int, message ...string) {
 	responseMessage := consts.GetMsg(errCode)
 	if len(message) > 0 {
 		responseMessage = message[0]
 	}
-	wrapper.JSON(http.StatusOK, Response{
+	wrapper.JSON(http.StatusOK, response{
 		Code:    0,
 		Status:  errCode,
 		Message: responseMessage,
